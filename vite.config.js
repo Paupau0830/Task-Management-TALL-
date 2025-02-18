@@ -8,4 +8,7 @@ export default defineConfig({
             'resources/js/app.js',
         ]),
     ],
+    build: {
+        outDir: 'public/build', // Specify the output directory
+    },
 });

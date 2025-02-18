@@ -2,33 +2,34 @@
 
 namespace App\Http\Livewire\Auth;
 
-use Livewire\Component;
 use App\Models\User;
+use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
 
 class Register extends Component
 {
-    public $name, $email, $password, $role, $password_confirmation;
+    public $name = '';
+    public $email = '';
+    public $password = '';
 
     protected $rules = [
         'name' => 'required|min:3',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|min:6|confirmed',
+        'email' => 'required|email:rfc,dns|unique:users',
+        'password' => 'required|min:6'
     ];
 
     public function register()
     {
         $this->validate();
-
-        User::create([
+        $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
-            'user_role' => $this->role,
-            'password' => Hash::make($this->password),
+            'password' => Hash::make($this->password)
         ]);
 
-        session()->flash('message', 'Registration successful!');
-        return redirect()->route('login');
+        auth()->login($user);
+
+        return redirect('/dashboard');
     }
 
     public function render()
