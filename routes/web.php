@@ -19,7 +19,7 @@ use App\Http\Livewire\LaravelExamples\UserManagement;
 use App\Http\Livewire\UserRegister;
 use App\Http\Livewire\VirtualReality;
 use Illuminate\Http\Request;
-
+use Spatie\Permission\Middleware\RoleMiddleware;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,14 +36,19 @@ Route::get('/', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/register', Register::class)->name('register');
     Route::get('/login', Login::class)->name('login');
 
     Route::get('/login/forgot-password', ForgotPassword::class)->name('forgot-password');
     Route::get('/reset-password/{id}', ResetPassword::class)->name('reset-password')->middleware('signed');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/register', Register::class)->name('register');
+    Route::get('/user-register', UserRegister::class)->name('user-register');
+    Route::get('/user-management', UserManagement::class)->name('user-management');
+});
+
+Route::middleware(['auth', 'role:admin|user'])->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/billing', Billing::class)->name('billing');
     Route::get('/profile', Profile::class)->name('profile');
@@ -53,6 +58,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/rtl', Rtl::class)->name('rtl');
     Route::get('/virtual-reality', VirtualReality::class)->name('virtual-reality');
     Route::get('/user-profile', UserProfile::class)->name('user-profile');
-    Route::get('/user-register', UserRegister::class)->name('user-register');
-    Route::get('/user-management', UserManagement::class)->name('user-management');
 });

@@ -11,7 +11,18 @@
         <x-form-input label="Email" name="email" type="email" />
         <x-form-input label="Password" name="password" type="password" />
         <x-form-input label="Confirm Password" name="password_confirmation" type="password" />
-        <x-form-input label="Role" name="role" type="text" />
+
+        <!-- Role Selection -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium">Role</label>
+            <select wire:model="role" class="w-full border rounded px-3 py-2">
+                <option value="">Select Role</option>
+                @foreach ($roles as $role)
+                <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                @endforeach
+            </select>
+            @error('role') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
 
         <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded">
             Register
