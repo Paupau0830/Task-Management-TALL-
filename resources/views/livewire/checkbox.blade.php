@@ -1,0 +1,1 @@
+<input type="checkbox" wire:model="selectedRows" value="{{ $id }}" class="form-checkbox h-5 w-5 text-blue-600">

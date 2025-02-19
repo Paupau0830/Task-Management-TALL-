@@ -23,11 +23,14 @@
 
                     <livewire:task-category-table />
 
+                    <button wire:click="$dispatch('deleteSelectedRows')" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full">
+                        Delete Selected
+                    </button>
+
                 </div>
             </div>
 
         </div>
     </div>
-
 
 </div>

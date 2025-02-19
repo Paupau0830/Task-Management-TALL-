@@ -13,6 +13,8 @@ class UsersTable extends DataTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
+        $this->setDefaultSort('created_at', 'desc');
+        $this->setColumnSelectStatus(true);
     }
 
     public function columns(): array
