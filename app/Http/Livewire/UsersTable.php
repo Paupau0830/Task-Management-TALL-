@@ -22,7 +22,7 @@ class UsersTable extends DataTableComponent
                 ->sortable(),
             Column::make("Email", "email")
                 ->sortable(),
-            Column::make("Role", "user_role")
+            Column::make("Role", "role")
                 ->sortable(),
             Column::make("Created at", "created_at")
                 ->sortable(),
