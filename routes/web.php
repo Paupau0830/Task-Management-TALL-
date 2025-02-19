@@ -16,6 +16,7 @@ use App\Http\Livewire\Rtl;
 
 use App\Http\Livewire\LaravelExamples\UserProfile;
 use App\Http\Livewire\LaravelExamples\UserManagement;
+use App\Http\Livewire\TaskCategories;
 use App\Http\Livewire\UserRegister;
 use App\Http\Livewire\VirtualReality;
 use Illuminate\Http\Request;
@@ -45,7 +46,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/register', Register::class)->name('register');
     Route::get('/user-register', UserRegister::class)->name('user-register');
+
     Route::get('/user-management', UserManagement::class)->name('user-management');
+
+    Route::get('/task-categories', TaskCategories::class)->name('task-categories');
 });
 
 Route::middleware(['auth', 'role:admin|user'])->group(function () {

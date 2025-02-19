@@ -8,13 +8,14 @@ use Illuminate\View\Component;
 
 class FormInput extends Component
 {
-    public $type, $name, $label;
+    public $type, $name, $label, $placeholder;
 
-    public function __construct($type = 'text', $name, $label)
+    public function __construct($type = 'text', $name, $label, $placeholder)
     {
         $this->type = $type;
         $this->name = $name;
         $this->label = $label;
+        $this->placeholder = $placeholder;
     }
 
     /**
