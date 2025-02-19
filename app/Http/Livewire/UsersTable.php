@@ -19,15 +19,15 @@ class UsersTable extends DataTableComponent
     {
         return [
             Column::make("Name", "name")
-                ->sortable(),
+                ->sortable()->searchable(),
             Column::make("Email", "email")
-                ->sortable(),
+                ->sortable()->searchable(),
             Column::make("Role", "role")
-                ->sortable(),
+                ->sortable()->searchable(),
             Column::make("Created at", "created_at")
-                ->sortable(),
+                ->sortable()->searchable(),
             Column::make("Updated at", "updated_at")
-                ->sortable(),
+                ->sortable()->searchable(),
         ];
     }
 }
