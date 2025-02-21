@@ -1,4 +1,4 @@
-<div x-data="registerForm()" class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg">
+<div x-data="editForm()" class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg">
 
     @if (session()->has('message'))
     <div class="bg-green-200 text-green-700 p-2 rounded mb-4">
@@ -6,11 +6,13 @@
     </div>
     @endif
 
-    <form wire:submit.prevent="register">
-        <x-form-input label="Name" name="name" type="text" placeholder="User name" />
-        <x-form-input label="Email" name="email" type="email" placeholder="User email" />
-        <x-form-input label="Password" name="password" type="password" placeholder="Password" />
-        <x-form-input label="Confirm Password" name="password_confirmation" type="password" placeholder="Password Confirmation" />
+    <form wire:submit.prevent="updateUser">
+        <div x-data="{ name: '{{ $name }}', email: '{{ $email }}' }">
+            <x-form-input label="Name" name="name" type="text" placeholder="User name" x-model="name" />
+            <x-form-input label="Email" name="email" type="email" placeholder="User email" x-model="email" />
+        </div>
+        <x-form-input label="Password" name="password" type="password" placeholder="Password" wire:model="password" />
+        <x-form-input label="Confirm Password" name="password_confirmation" type="password" placeholder="Password Confirmation" wire:model="password_confirmation" />
 
         <!-- Role Selection -->
         <x-role-select model="role" />
@@ -29,24 +31,14 @@
         <br>
 
         <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded">
-            Register
+            Update User
         </button>
     </form>
 </div>
 
 <script>
-    function registerForm() {
+    function editForm() {
         return {
-            name: '',
-            email: '',
-            password: '',
-            password_confirmation: '',
-            errors: {
-                name: '',
-                email: '',
-                password: '',
-                password_confirmation: ''
-            },
 
             validateName() {
                 this.errors.name = this.name.length < 3 ? 'Name must be at least 3 characters.' : '';
@@ -57,22 +49,11 @@
                 this.errors.email = emailPattern.test(this.email) ? '' : 'Enter a valid email.';
             },
 
-            validatePassword() {
-                this.errors.password = this.password.length < 6 ? 'Password must be at least 6 characters.' : '';
-            },
-
-            validateConfirmPassword() {
-                this.errors.password_confirmation =
-                    this.password !== this.password_confirmation ? 'Passwords do not match.' : '';
-            },
-
             submitForm() {
                 this.validateName();
                 this.validateEmail();
-                this.validatePassword();
-                this.validateConfirmPassword();
 
-                if (!this.errors.name && !this.errors.email && !this.errors.password && !this.errors.password_confirmation) {
+                if (!this.errors.name && !this.errors.email) {
                     document.querySelector('form').submit();
                 }
             }

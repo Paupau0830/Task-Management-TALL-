@@ -13,7 +13,11 @@
             <div class="flex-auto px-0 pt-0 pb-2">
                 <div class="p-0 overflow-x-auto" style="padding: 30px;">
 
-                    <livewire:auth.register />
+                    <!-- Task Edit Form -->
+                    <livewire:task-edit-form :id="$this->taskID" />
+
+                    <!-- Add Comments Section -->
+                    <livewire:task-comments :task-id="$this->taskID" />
 
                 </div>
             </div>

@@ -2,28 +2,27 @@
 
 namespace App\View\Components;
 
-use App\Models\TaskCategory;
+use App\Models\TaskStatuses;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class CategorySelect extends Component
+class TaskStatusSelect extends Component
 {
-    public $categories;
+    public $statuses;
     public $model;
 
     public function __construct($model)
     {
-        $this->categories = TaskCategory::where([['deleted', 0], ['status', 1]])->get();
+        $this->statuses = TaskStatuses::where('deleted', 0)->get();
         $this->model = $model;
     }
-
 
     /**
      * Get the view / contents that represent the component.
      */
     public function render(): View|Closure|string
     {
-        return view('components.category-select');
+        return view('components.task-status-select');
     }
 }

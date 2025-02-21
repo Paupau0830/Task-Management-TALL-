@@ -13,7 +13,7 @@
             <div class="flex-auto px-0 pt-0 pb-2">
                 <div class="p-0 overflow-x-auto" style="padding: 30px;">
 
-                    <livewire:auth.register />
+                    <livewire:edit-component :id="$this->id" />
 
                 </div>
             </div>

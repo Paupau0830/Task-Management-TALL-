@@ -7,9 +7,14 @@
         <li class="{{ (Request::is('rtl') ? 'pl-2' : '') }} leading-normal text-size-sm">
           <a class="opacity-50 text-slate-700" href="javascript:;">Pages</a>
         </li>
-        <li class="text-size-sm pl-2 capitalize leading-normal text-slate-700 {{ (Request::is('rtl') ? 'before:float-right before:pl-2' : 'before:float-left before:pr-2') }} before:text-gray-600 before:content-['/']" aria-current="page">{{ str_replace('-', ' ', Request::path()) }}</li>
+        @php
+        $segments = explode('/', Request::path());
+        $filteredSegments = array_filter($segments, fn($segment) => !is_numeric($segment)); // Remove numbers
+        $formattedPath = implode(' / ', array_map('ucwords', $filteredSegments)); // Capitalize and format
+        @endphp
+        <li class="text-size-sm pl-2 capitalize leading-normal text-slate-700 {{ (Request::is('rtl') ? 'before:float-right before:pl-2' : 'before:float-left before:pr-2') }} before:text-gray-600 before:content-['/']" aria-current="page">{{ $formattedPath }}</li>
       </ol>
-      <h6 class="mb-0 font-bold capitalize">{{ str_replace('-', ' ', Request::path()) }}</h6>
+      <h6 class="mb-0 font-bold capitalize">{{ $formattedPath }}</h6>
     </nav>
 
     <div class="flex items-center mt-2 grow sm:mt-0 {{ (Request::is('rtl') ? '' : 'sm:mr-6') }}md:mr-0 lg:flex lg:basis-auto">

@@ -51,6 +51,7 @@
 
 
         <!-- Task Categories Start -->
+        @can('manage legends')
         <li class="mt-0.5 w-full">
           <a class="py-2.7 text-size-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors
               {{ (Request::is('task-categories') ? 'shadow-soft-xl rounded-lg bg-white font-semibold text-slate-700' : '') }}" href="{{ url('task-categories') }}">
@@ -76,11 +77,12 @@
             <span class="{{ (Request::is('rtl') ? 'mr-1' : 'ml-1') }} duration-300 opacity-100 pointer-events-none ease-soft">Task Categories</span>
           </a>
         </li>
+        @endcan
         <!-- Task Categories End -->
 
 
         <!-- User Management Start -- Admin only -->
-        @role('admin')
+        @can('manage users')
         <li class="mt-0.5 w-full">
           <a class="py-2.7 text-size-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors
               {{ (Request::is('user-management') ? 'shadow-soft-xl rounded-lg bg-white font-semibold text-slate-700' : '') }}" href="{{ url('user-management') }}">
@@ -109,7 +111,7 @@
               Management</span>
           </a>
         </li>
-        @endrole
+        @endcan
         <!-- User Management End -->
 
       </ul>

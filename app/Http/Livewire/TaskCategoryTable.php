@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\StaticStatuses;
 use App\Models\TaskCategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,7 @@ class TaskCategoryTable extends DataTableComponent
     protected $listeners = ['deleteSelectedRows' => 'deleteSelected'];
 
     public array $selectedRows = [];
+    public array $statusOptions = [];
 
     public function configure(): void
     {
@@ -39,6 +41,10 @@ class TaskCategoryTable extends DataTableComponent
     public function mount()
     {
         $this->listeners[] = 'updateColumn';
+
+        $this->statusOptions = StaticStatuses::where('deleted', 0) // Exclude deleted statuses
+            ->pluck('title', 'id') // Returns an associative array [id => title]
+            ->toArray();
     }
 
     public function updateColumn($id, $column, $value)
@@ -50,10 +56,10 @@ class TaskCategoryTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make('title')
+            Column::make('', 'id')
                 ->format(fn ($value, $row) => view('livewire.checkbox', ['id' => $row->id])),
 
-            Column::make('ID', 'id')->sortable()->searchable(),
+            Column::make('No.', 'id')->sortable()->searchable(),
             Column::make('Title', 'title')
                 ->sortable()
                 ->searchable()
@@ -69,22 +75,24 @@ class TaskCategoryTable extends DataTableComponent
                     'id' => $row->id,
                     'column' => 'status',
                     'value' => $value,
-                    'options' => ['Active', 'Inactive'], // Dropdown options
+                    'options' => $this->statusOptions, // Dropdown options
                 ])),
             Column::make('Created By', 'creator.name')->sortable(),
-            Column::make('Deleted By', 'deleter.name')->sortable(),
-            Column::make('Deleted', 'deleted')->sortable()
-                ->format(fn ($value) => $value ? 'Yes' : 'No'),
+            // Column::make('Deleted By', 'deleter.name')->sortable(),
+            // Column::make('Deleted', 'deleted')->sortable()
+            //     ->format(fn ($value) => $value ? 'Yes' : 'No'),
             Column::make('Created At', 'created_at')->sortable()
                 ->format(fn ($value) => \Carbon\Carbon::parse($value)->format('Y-m-d H:i:s')),
+            Column::make('Updated At', 'updated_at')->sortable()
+                ->format(fn ($value) => \Carbon\Carbon::parse($value)->format('Y-m-d H:i:s')),
 
-            WireLinkColumn::make("Delete")
-                ->title(fn ($row) => 'Delete')
-                ->confirmMessage('Are you sure you want to delete this item?')
-                ->action(fn ($row) => 'deleteCategory("' . $row->id . '")')
-                ->attributes(fn ($row) => [
-                    'class' => 'btn btn-danger',
-                ]),
+            // WireLinkColumn::make("Delete")
+            //     ->title(fn ($row) => 'Delete')
+            //     ->confirmMessage('Are you sure you want to delete this item?')
+            //     ->action(fn ($row) => 'deleteCategory("' . $row->id . '")')
+            //     ->attributes(fn ($row) => [
+            //         'class' => 'px-3 py-1 bg-red-500 text-white rounded hover:bg-blue-600',
+            //     ]),
 
         ];
     }
@@ -96,19 +104,19 @@ class TaskCategoryTable extends DataTableComponent
             ->with(['creator', 'deleter']);
     }
 
-    public function deleteCategory($id)
-    {
-        $category = TaskCategory::find($id);
+    // public function deleteCategory($id)
+    // {
+    //     $category = TaskCategory::find($id);
 
-        if ($category) {
-            $category->update([
-                'deleted' => 1,
-                'deleted_by' => Auth::id(),
-            ]);
+    //     if ($category) {
+    //         $category->update([
+    //             'deleted' => 1,
+    //             'deleted_by' => Auth::id(),
+    //         ]);
 
-            $this->dispatch('refreshDatatable'); // Refresh table after update
-        }
-    }
+    //         $this->dispatch('refreshDatatable'); // Refresh table after update
+    //     }
+    // }
 
     public function deleteSelected()
     {

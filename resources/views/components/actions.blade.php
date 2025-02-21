@@ -1,9 +1,6 @@
 <div class="flex space-x-2">
-    <button wire:click="edit({{ $row->id }})" class="px-3 py-1 text-white bg-green-500 rounded">
+    <!-- Edit Button -->
+    <a href="{{ route('user-edit', $user->id) }}" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
         Edit
-    </button>
-
-    <button wire:click="confirmDelete({{ $row->id }})" class="px-3 py-1 text-white bg-red-500 rounded">
-        Delete
-    </button>
+    </a>
 </div>

@@ -17,7 +17,9 @@ use App\Http\Livewire\Rtl;
 use App\Http\Livewire\LaravelExamples\UserProfile;
 use App\Http\Livewire\LaravelExamples\UserManagement;
 use App\Http\Livewire\TaskCategories;
+use App\Http\Livewire\TaskEdit;
 use App\Http\Livewire\UserRegister;
+use App\Http\Livewire\UserEdit;
 use App\Http\Livewire\VirtualReality;
 use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -46,8 +48,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/register', Register::class)->name('register');
     Route::get('/user-register', UserRegister::class)->name('user-register');
-
     Route::get('/user-management', UserManagement::class)->name('user-management');
+    Route::get('/users/{id}/edit', UserEdit::class)->name('user-edit');
 
     Route::get('/task-categories', TaskCategories::class)->name('task-categories');
 });
@@ -62,4 +64,5 @@ Route::middleware(['auth', 'role:admin|user'])->group(function () {
     Route::get('/rtl', Rtl::class)->name('rtl');
     Route::get('/virtual-reality', VirtualReality::class)->name('virtual-reality');
     Route::get('/user-profile', UserProfile::class)->name('user-profile');
+    Route::get('/tasks/{id}/edit', TaskEdit::class)->name('task-edit');
 });

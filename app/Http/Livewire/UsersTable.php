@@ -30,6 +30,9 @@ class UsersTable extends DataTableComponent
                 ->sortable()->searchable(),
             Column::make("Updated at", "updated_at")
                 ->sortable()->searchable(),
+            Column::make('', 'id') // Use 'id' but keep the header empty
+                ->format(fn ($value, $row) => view('components.actions', ['user' => $row])) // Render Blade component
+                ->html(),
         ];
     }
 }
