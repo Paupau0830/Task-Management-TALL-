@@ -31,6 +31,7 @@ class TaskEditForm extends Component
 
     public function mount($id)
     {
+        $this->taskID = $id;
         $task = Tasks::find($id);
         $this->newTask = $task->title;
         $this->newDescription = $task->description;

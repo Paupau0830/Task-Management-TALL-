@@ -20,7 +20,7 @@ class TaskCategoryForm extends Component
         // Create new task category
         TaskCategory::create([
             'title' => $this->category,
-            'status' => 'Active', // Default value
+            'status' => 1, // Default value
             'created_by' => Auth::id(), // Logged-in user ID
             'deleted_by' => null, // No deleter at creation
             'deleted' => false, // Default to not deleted

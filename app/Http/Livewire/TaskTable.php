@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Comments;
 use App\Models\TaskCategory;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -48,16 +49,17 @@ class TaskTable extends DataTableComponent
             SelectFilter::make('Status')
                 ->options([
                     '' => 'All',  // Show all by default
-                    'Open' => 'Open',
-                    'Ongoing' => 'Ongoing',
-                    'Completed' => 'Completed',
-                    'Deleted' => 'Deleted',
+                    1 => 'Open',
+                    2 => 'Ongoing',
+                    3 => 'Completed',
+                    4 => 'Deleted',
                 ])
                 ->filter(function ($query, $value) {
-                    if ($value) {
+                    if ($value !== '') { // Ensure filtering only applies when a specific status is selected
                         $query->where('tasks.status', $value);
                     }
                 }),
+
 
             // Searchable text filter
             TextFilter::make('Title')
@@ -98,13 +100,49 @@ class TaskTable extends DataTableComponent
 
     public function updateColumn($id, $column, $value)
     {
-        Tasks::where('id', $id)->update([$column => $value]);
+        $task = Tasks::find($id);
 
-        if ($column != 'status') {
-            Tasks::where('id', $id)->update(['status' => 1]);
+        // Prevent redundant updates
+        if (!$task || $task->$column == $value) {
+            return;
         }
 
-        $this->dispatch('refreshDatatable'); // Refresh table after update
+        // Update the column
+        $task->update([$column => $value]);
+
+        // Ensure status updates if necessary
+        if ($column != 'status' && $task->status != 1) {
+            $task->update(['status' => 1]);
+        }
+
+        // 🔹 Convert ID to Name Based on Column
+        $convertedValue = $this->getColumnValue($column, $value);
+
+        // Prevent duplicate system comments
+        $newComment = 'I updated ' . ucfirst(str_replace('_', ' ', $column)) . ' to ' . $convertedValue . ' (system generated comment)';
+
+        if (!Comments::where('task_id', $id)->where('user_id', Auth::id())->where('content', $newComment)->exists()) {
+            Comments::create([
+                'task_id' => $id,
+                'user_id' => Auth::id(),
+                'content' => $newComment,
+            ]);
+        }
+
+        // Refresh datatable
+        $this->dispatch('refreshDatatable');
+    }
+
+    private function getColumnValue($column, $value)
+    {
+        if (!$value) return 'N/A'; // Handle null values
+
+        return match ($column) {
+            'status'      => TaskStatuses::find($value)?->title ?? 'Unknown Status',
+            'category'    => TaskCategory::find($value)?->title ?? 'Unknown Category',
+            'assigned_to' => User::find($value)?->name ?? 'Unknown User',
+            default       => $value, // If not a mapped column, return the raw value
+        };
     }
 
     public function columns(): array
@@ -156,7 +194,7 @@ class TaskTable extends DataTableComponent
                         'column' => 'status',
                         'value' => $value,
                         'options' => collect($this->taskStatusOptions)
-                            ->reject(fn ($status) => $status === 'Deleted' || ($row->status !== 'Completed' && $status === 'Completed'))
+                            ->reject(fn ($status) => $status === 3 || ($row->status !== 4 && $status === 4))
                             ->toArray(),
                     ])),
 
@@ -199,8 +237,8 @@ class TaskTable extends DataTableComponent
                         'column' => 'status',
                         'value' => $value,
                         'options' => collect($this->taskStatusOptions)
-                            ->reject(fn ($status) => $status === 'Deleted') // Always remove "Deleted"
-                            ->when($value !== 'Completed', fn ($statuses) => $statuses->reject(fn ($status) => $status === 'Completed')) // Hide "Completed" unless it's selected
+                            ->reject(fn ($status) => $status === 3) // Always remove "Deleted"
+                            ->when($value !== 4, fn ($statuses) => $statuses->reject(fn ($status) => $status === 'Completed')) // Hide "Completed" unless it's selected
                             ->toArray(),
                     ])),
 
@@ -269,7 +307,7 @@ class TaskTable extends DataTableComponent
     {
         Tasks::whereIn('id', $this->selectedRows)
             ->update([
-                'status' => 'Completed',
+                'status' => 4,
                 'completed_by' => auth()->id(),
             ]);
 

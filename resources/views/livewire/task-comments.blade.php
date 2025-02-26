@@ -18,11 +18,12 @@
             <p class="text-gray-700">{{ $comment->content }}</p>
             <small class="text-gray-500">{{ $comment->created_at->diffForHumans() }}</small>
 
-            @if ($comment->user_id === auth()->id())
+            @if ($comment->user_id === auth()->id() && !Str::contains($comment->content, 'system generated'))
             <button wire:click="deleteComment({{ $comment->id }})" class="absolute top-1 right-2 text-red-500 text-xs">
                 Delete
             </button>
             @endif
+
         </div>
         @endforeach
     </div>
